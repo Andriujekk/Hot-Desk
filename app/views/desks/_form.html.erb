@@ -1,0 +1,37 @@
+<%= form_with(model: desk) do |form| %>
+  <% if desk.errors.any? %>
+    <div style="color: red">
+      <h2><%= pluralize(desk.errors.count, "error") %> prohibited this desk from being saved:</h2>
+
+      <ul>
+        <% desk.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= form.label :floor_number, style: "display: block" %>
+    <%= form.number_field :floor_number %>
+  </div>
+
+  <div>
+    <%= form.label :pos_x, style: "display: block" %>
+    <%= form.number_field :pos_x %>
+  </div>
+
+  <div>
+    <%= form.label :pos_y, style: "display: block" %>
+    <%= form.number_field :pos_y %>
+  </div>
+
+  <div>
+    <%= form.label :booked_by, style: "display: block" %>
+    <%= form.text_field :booked_by %>
+  </div>
+
+  <div>
+    <%= form.submit %>
+  </div>
+<% end %>

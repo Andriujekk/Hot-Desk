@@ -1,0 +1,17 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  floor_number: 1
+  lu: 1
+  ld: 1
+  ru: 1
+  rd: 1
+  booked_by: MyString
+
+two:
+  floor_number: 1
+  lu: 1
+  ld: 1
+  ru: 1
+  rd: 1
+  booked_by: MyString
