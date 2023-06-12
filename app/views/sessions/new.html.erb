@@ -1,0 +1,9 @@
+<%= form_with(url: sessions_path, local: true, method: :post) do |form| %>
+    <%= form.label :login %>
+    <%= form.text_field :login %>
+  
+    <%= form.label :password %>
+    <%= form.password_field :password %>
+  
+    <%= form.submit "Log in" %>
+  <% end %>

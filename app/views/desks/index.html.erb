@@ -2,13 +2,75 @@
 
 <h1>Desks</h1>
 
-<div id="desks">
+
+<%= form_tag desks_path, method: :get do %>
+  <%= select_tag :floor, options_for_select(@floors, params[:floor]), prompt: 'Select Floor' %>
+  <%= submit_tag 'Choose Floor' %>
+<% end %>
+
+<div class="grid-container">
   <% @desks.each do |desk| %>
-    <%= render desk %>
-    <p>
-      <%= link_to "Show this desk", desk %>
-    </p>
+    <div class="grid-item" style="grid-column: <%= desk.pos_x %>; grid-row: <%= desk.pos_y %>;">
+
+      <% if desk.booked_by?(current_user) %>
+         <%= button_to 'Cancel Booking', unbook_desk_path(desk), method: :patch, class:'booked' %>
+      <% elsif  desk.booked_by?(nil) %>
+        <%= button_to 'Book', book_desk_path(desk), method: :patch, class:'available' %>
+      <% else %>
+        <%= button_to 'Booked', unbook_desk_path(desk), method: :patch, class:'booked', disabled: true %>
+      <% end %>
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New desk", new_desk_path %>
+<%= form_with(model: @new_desk, url: desks_path, local: true) do |form| %>
+  <%= form.label :floor_number %>
+  <%= form.number_field :floor_number %>
+
+  <%= form.label :pos_x %>
+  <%= form.number_field :pos_x %>
+
+  <%= form.label :pos_y %>
+  <%= form.number_field :pos_y %>
+
+  <%= form.submit 'Add Desk' %>
+<% end %>
+
+<style>
+  .grid-container {
+    display: grid;
+    background: gray;
+    gap: 10px; 
+  }
+
+  .grid-item {
+    display: flex;
+    justify-content: center;
+    border: solid #461f00;
+    background: #A0793D;
+    
+  }
+
+  .desk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-gap: 10px;
+  }
+
+  .desk {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .booked {
+    background-color: red;
+    color: white;
+  }
+
+  .available {
+    background-color: green;
+    color: white;
+  }
+</style>

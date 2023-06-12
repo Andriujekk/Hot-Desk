@@ -3,8 +3,14 @@ class DesksController < ApplicationController
 
   # GET /desks or /desks.json
   def index
-    @desks = Desk.all
+    @floors = Desk.distinct.pluck(:floor_number).uniq.sort
+    @selected_floor = params[:floor] || session[:selected_floor]
+    @desks = Desk.where(floor_number: @selected_floor)
+
+    session[:selected_floor] = @selected_floor
+    @new_desk = Desk.new
   end
+  
 
   # GET /desks/1 or /desks/1.json
   def show
@@ -56,6 +62,42 @@ class DesksController < ApplicationController
       format.json { head :no_content }
     end
   end
+
+  def book
+    @desk = Desk.find(params[:id])
+    if @desk.toggle_booking(current_user)
+      redirect_to desks_path, notice: 'Desk booked successfully.'
+    else
+      redirect_to desks_path, alert: 'Unable to book the desk.'
+    end
+  end
+
+  def unbook
+    @desk = Desk.find(params[:id])
+    if @desk.toggle_booking(current_user)
+      redirect_to desks_path, notice: 'Desk booking canceled.'
+    else
+      redirect_to desks_path, alert: 'Unable to cancel the desk booking.'
+    end
+  end
+
+  def create
+    @new_desk = Desk.new(desk_params)
+  
+    if @new_desk.save
+      flash[:notice] = 'Desk created successfully.'
+      redirect_to desks_path(floor: @selected_floor)
+    else
+      render :index
+    end
+  end
+  
+  private
+  
+  def desk_params
+    params.require(:desk).permit(:floor_number, :pos_x, :pos_y)
+  end
+
 
   private
     # Use callbacks to share common setup or constraints between actions.
