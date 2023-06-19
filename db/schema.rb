@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_12_221441) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_19_230204) do
   create_table "desks", force: :cascade do |t|
     t.integer "floor_number"
     t.integer "pos_x"
@@ -42,6 +42,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_12_221441) do
     t.string "password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "isAdmin"
   end
 
   add_foreign_key "desks", "users"

@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-helper_method :current_user, :logged_in?
+helper_method :current_user, :logged_in?, :is_admin?
 
   private
 
@@ -9,6 +9,10 @@ helper_method :current_user, :logged_in?
 
   def logged_in?
     current_user.present?
+  end
+
+  def is_admin?
+    current_user.isAdmin
   end
 
   def require_login

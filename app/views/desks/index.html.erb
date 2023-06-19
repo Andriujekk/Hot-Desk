@@ -18,25 +18,29 @@
       <% else %>
         <%= button_to 'Booked', unbook_desk_path(desk), method: :patch, class:'booked', disabled: true %>
       <% end %>
-      <%= button_to 'X', desk_path(desk), method: :delete, data: { confirm: 'Are you sure you want to remove this desk?' }, class: 'remove-button' %>
+
+      <% if is_admin? %>
+        <%= button_to 'X', desk_path(desk), method: :delete, data: { confirm: 'Are you sure you want to remove this desk?' }, class: 'remove-button' %>
+      <% end %>
    
     </div>
   <% end %>
 </div>
 
 
+<% if is_admin? %>
+  <%= form_with(model: @new_desk, url: desks_path, local: true) do |form| %>
+    <%= form.label :floor_number %>
+    <%= form.number_field :floor_number %>
 
-<%= form_with(model: @new_desk, url: desks_path, local: true) do |form| %>
-  <%= form.label :floor_number %>
-  <%= form.number_field :floor_number %>
+    <%= form.label :pos_x %>
+    <%= form.number_field :pos_x %>
 
-  <%= form.label :pos_x %>
-  <%= form.number_field :pos_x %>
+    <%= form.label :pos_y %>
+    <%= form.number_field :pos_y %>
 
-  <%= form.label :pos_y %>
-  <%= form.number_field :pos_y %>
-
-  <%= form.submit 'Add Desk' %>
+    <%= form.submit 'Add Desk' %>
+  <% end %>
 <% end %>
 
 <style>

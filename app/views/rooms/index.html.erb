@@ -20,29 +20,32 @@
       <% else %>
         <%= button_to 'Booked', unbook_room_path(room), method: :patch, class:'booked', disabled: true %>
       <% end %>
-
-      <%= button_to 'X', room_path(room), method: :delete, data: { confirm: 'Are you sure you want to remove this room?' }, class: 'remove-button' %>
+      <% if is_admin? %>
+        <%= button_to 'X', room_path(room), method: :delete, data: { confirm: 'Are you sure you want to remove this room?' }, class: 'remove-button' %>
+      <% end %>
     </div>
   <% end %>
 </div>
 
-<%= form_with(model: @new_room, url: rooms_path, local: true) do |form| %>
-  <%= form.label :floor_number %>
-  <%= form.number_field :floor_number %>
+<% if is_admin? %>
+  <%= form_with(model: @new_room, url: rooms_path, local: true) do |form| %>
+    <%= form.label :floor_number %>
+    <%= form.number_field :floor_number %>
 
-  <%= form.label :top_left_x %>
-  <%= form.number_field :top_left_x %>
+    <%= form.label :top_left_x %>
+    <%= form.number_field :top_left_x %>
 
-  <%= form.label :top_left_y %>
-  <%= form.number_field :top_left_y %>
+    <%= form.label :top_left_y %>
+    <%= form.number_field :top_left_y %>
 
-  <%= form.label :width %>
-  <%= form.number_field :width %>
-  
-  <%= form.label :height %>
-  <%= form.number_field :height %>
-  
-  <%= form.submit 'Add Room' %>
+    <%= form.label :width %>
+    <%= form.number_field :width %>
+    
+    <%= form.label :height %>
+    <%= form.number_field :height %>
+    
+    <%= form.submit 'Add Room' %>
+  <% end %>
 <% end %>
 
 
