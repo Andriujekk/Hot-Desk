@@ -1,7 +1,7 @@
 <p style="color: green"><%= notice %></p>
 
 <h1>Desks</h1>
-
+<%= link_to 'View Rooms', rooms_path %>
 
 <%= form_tag desks_path, method: :get do %>
   <%= select_tag :floor, options_for_select(@floors, params[:floor]), prompt: 'Select Floor' %>
@@ -11,17 +11,20 @@
 <div class="grid-container">
   <% @desks.each do |desk| %>
     <div class="grid-item" style="grid-column: <%= desk.pos_x %>; grid-row: <%= desk.pos_y %>;">
-
       <% if desk.booked_by?(current_user) %>
          <%= button_to 'Cancel Booking', unbook_desk_path(desk), method: :patch, class:'booked' %>
-      <% elsif  desk.booked_by?(nil) %>
+      <% elsif desk.booked_by?(nil) %>
         <%= button_to 'Book', book_desk_path(desk), method: :patch, class:'available' %>
       <% else %>
         <%= button_to 'Booked', unbook_desk_path(desk), method: :patch, class:'booked', disabled: true %>
       <% end %>
+      <%= button_to 'X', desk_path(desk), method: :delete, data: { confirm: 'Are you sure you want to remove this desk?' }, class: 'remove-button' %>
+   
     </div>
   <% end %>
 </div>
+
+
 
 <%= form_with(model: @new_desk, url: desks_path, local: true) do |form| %>
   <%= form.label :floor_number %>
@@ -72,5 +75,10 @@
   .available {
     background-color: green;
     color: white;
+  }
+
+  .remove-button{
+    background-color:red;
+    font: bold
   }
 </style>

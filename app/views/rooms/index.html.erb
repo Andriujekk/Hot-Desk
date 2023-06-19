@@ -1,14 +1,92 @@
 <p style="color: green"><%= notice %></p>
 
 <h1>Rooms</h1>
+<%= link_to 'View Desks', desks_path %>
 
-<div id="rooms">
+
+<%= form_tag rooms_path, method: :get do %>
+  <%= select_tag :floor, options_for_select(@floors, params[:floor]), prompt: 'Select Floor' %>
+  <%= submit_tag 'Choose Floor' %>
+<% end %>
+
+<div class="grid-container">
   <% @rooms.each do |room| %>
-    <%= render room %>
-    <p>
-      <%= link_to "Show this room", room %>
-    </p>
+    <div class="room <%= any_desk_booked?(room) ? 'booked' : 'free' %>" style="grid-column: <%= room.top_left_x %> / span <%= room.width %>; grid-row: <%= room.top_left_y %> / span <%= room.height %>;">
+      <span class="room-label">Room desks: <%= desks_in_room(room).count %></span>
+      <% if room.booked_by?(current_user) %>
+         <%= button_to 'Cancel Booking', unbook_room_path(room, id: room.id), method: :patch, class:'booked' %>
+      <% elsif room.booked_by?(nil) %>
+        <%= button_to 'Book', book_room_path(room, id: room.id), method: :patch, class:'available' %>
+      <% else %>
+        <%= button_to 'Booked', unbook_room_path(room), method: :patch, class:'booked', disabled: true %>
+      <% end %>
+
+      <%= button_to 'X', room_path(room), method: :delete, data: { confirm: 'Are you sure you want to remove this room?' }, class: 'remove-button' %>
+    </div>
   <% end %>
 </div>
 
-<%= link_to "New room", new_room_path %>
+<%= form_with(model: @new_room, url: rooms_path, local: true) do |form| %>
+  <%= form.label :floor_number %>
+  <%= form.number_field :floor_number %>
+
+  <%= form.label :top_left_x %>
+  <%= form.number_field :top_left_x %>
+
+  <%= form.label :top_left_y %>
+  <%= form.number_field :top_left_y %>
+
+  <%= form.label :width %>
+  <%= form.number_field :width %>
+  
+  <%= form.label :height %>
+  <%= form.number_field :height %>
+  
+  <%= form.submit 'Add Room' %>
+<% end %>
+
+
+<style>
+.grid-container {
+    display: grid;
+    background: gray;
+    gap: 10px; 
+  }
+
+  .grid-item {
+    display: flex;
+    justify-content: center;
+    border: solid #461f00;
+    background: #A0793D;
+    
+  }
+
+  .room {
+    border: dashed #000000;
+  }
+
+  .free {
+    background: green; /* Set a different background color for available rooms */
+  }
+
+  .booked {
+    background-color: red;
+    color: white;
+  }
+
+  .available {
+    background-color: green;
+    color: white;
+  }
+
+  .room-label {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+  }
+
+  .remove-button{
+    background-color:red;
+    font: bold
+  }
+  </style>

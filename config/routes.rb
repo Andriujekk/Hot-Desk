@@ -12,6 +12,10 @@ Rails.application.routes.draw do
     patch 'book', on: :member
     patch 'unbook', on: :member
   end
+  resources :rooms, only: [:index] do
+    patch 'book', on: :member
+    patch 'unbook', on: :member
+  end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Defines the root path route ("/")

@@ -55,12 +55,10 @@ class DesksController < ApplicationController
 
   # DELETE /desks/1 or /desks/1.json
   def destroy
+    @desk = Desk.find(params[:id])
     @desk.destroy
 
-    respond_to do |format|
-      format.html { redirect_to desks_url, notice: "Desk was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to desks_path, notice: 'Desk removed successfully.'
   end
 
   def book
@@ -91,13 +89,6 @@ class DesksController < ApplicationController
       render :index
     end
   end
-  
-  private
-  
-  def desk_params
-    params.require(:desk).permit(:floor_number, :pos_x, :pos_y)
-  end
-
 
   private
     # Use callbacks to share common setup or constraints between actions.
@@ -107,6 +98,6 @@ class DesksController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def desk_params
-      params.require(:desk).permit(:floor_number, :pos_x, :pos_y, :booked_by)
+      params.require(:desk).permit(:floor_number, :pos_x, :pos_y)
     end
 end

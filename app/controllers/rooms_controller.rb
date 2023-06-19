@@ -3,7 +3,13 @@ class RoomsController < ApplicationController
 
   # GET /rooms or /rooms.json
   def index
-    @rooms = Room.all
+
+    @floors = Room.distinct.pluck(:floor_number).uniq.sort
+    @selected_floor = params[:floor] || session[:selected_floor]
+    @desks = Desk.where(floor_number: @selected_floor)
+    @rooms = Room.where(floor_number: @selected_floor)
+
+    @new_room = Room.new
   end
 
   # GET /rooms/1 or /rooms/1.json
@@ -19,20 +25,56 @@ class RoomsController < ApplicationController
   def edit
   end
 
-  # POST /rooms or /rooms.json
-  def create
-    @room = Room.new(room_params)
-
-    respond_to do |format|
-      if @room.save
-        format.html { redirect_to room_url(@room), notice: "Room was successfully created." }
-        format.json { render :show, status: :created, location: @room }
-      else
-        format.html { render :new, status: :unprocessable_entity }
-        format.json { render json: @room.errors, status: :unprocessable_entity }
-      end
+  def desks_in_room(room)
+    Desk.all.select do |desk|
+        desk_in_room?(desk, room)
     end
   end
+
+  def desk_in_room?(desk, room)
+      desk.pos_x >= room.top_left_x && 
+      desk.pos_x < room.top_left_x + room.width &&
+      desk.pos_y >= room.top_left_y && 
+      desk.pos_y < room.top_left_y + room.height
+  end
+
+
+  def book
+    room = Room.find(params[:id])
+    room.toggle_booking(current_user)
+  
+    desks_in_room(room).each do |desk|
+      desk.toggle_booking(current_user)
+    end
+  
+    redirect_to rooms_path
+  end
+  
+  def unbook
+    room = Room.find(params[:id])
+    room.toggle_booking(nil)
+  
+    desks_in_room(room).each do |desk|
+      desk.toggle_booking(nil)
+      desk.save
+    end
+  
+    redirect_to rooms_path
+  end
+  
+
+  # POST /rooms or /rooms.json
+  def create
+    @new_room = Room.new(room_params)
+  
+    if @new_room.save
+      flash[:notice] = 'Desk created successfully.'
+      redirect_to rooms_path(floor: @selected_floor)
+    else
+      render :index
+    end
+  end
+
 
   # PATCH/PUT /rooms/1 or /rooms/1.json
   def update
@@ -49,12 +91,10 @@ class RoomsController < ApplicationController
 
   # DELETE /rooms/1 or /rooms/1.json
   def destroy
+    @room = Room.find(params[:id])
     @room.destroy
 
-    respond_to do |format|
-      format.html { redirect_to rooms_url, notice: "Room was successfully destroyed." }
-      format.json { head :no_content }
-    end
+    redirect_to rooms_path, notice: 'Room removed successfully.'
   end
 
   private
@@ -65,6 +105,7 @@ class RoomsController < ApplicationController
 
     # Only allow a list of trusted parameters through.
     def room_params
-      params.require(:room).permit(:floor_number, :lu, :ld, :ru, :rd, :booked_by)
+      params.require(:room).permit(:floor_number, :top_left_x, :top_left_y, :width, :height, :booked_by)
     end
 end
+

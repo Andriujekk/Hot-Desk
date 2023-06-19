@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_06_11_190951) do
+ActiveRecord::Schema[7.0].define(version: 2023_06_12_221441) do
   create_table "desks", force: :cascade do |t|
     t.integer "floor_number"
     t.integer "pos_x"
@@ -24,14 +24,14 @@ ActiveRecord::Schema[7.0].define(version: 2023_06_11_190951) do
 
   create_table "rooms", force: :cascade do |t|
     t.integer "floor_number"
-    t.integer "lu"
-    t.integer "ld"
-    t.integer "ru"
-    t.integer "rd"
     t.string "booked_by"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.integer "user_id"
+    t.integer "top_left_x"
+    t.integer "top_left_y"
+    t.integer "width"
+    t.integer "height"
     t.index ["user_id"], name: "index_rooms_on_user_id"
   end
 
